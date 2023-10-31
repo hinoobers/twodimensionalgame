@@ -19,4 +19,5 @@ public class ClientPlayer extends Player {
     public void onCollide(Block block) {
         super.onCollide(block);
     }
+
 }

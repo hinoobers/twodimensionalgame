@@ -11,7 +11,7 @@ public class Block {
 
     @Getter
     protected int x, y;
-    protected int width = 20, height = 20;
+    @Getter protected int width = 20, height = 20;
     public XYBoundingBox boundingBox;
 
     public void move(int x, int y) {

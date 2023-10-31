@@ -1,5 +1,6 @@
 package org.hinoob.two2d.world;
 
+import org.hinoob.two2d.TwodimensionalGame;
 import org.hinoob.two2d.block.Block;
 import org.hinoob.two2d.entity.Entity;
 import org.hinoob.two2d.entity.type.ClientPlayer;
@@ -14,7 +15,7 @@ public class World {
 
     public int calculateSectionFor(Entity player) {
         int posX = player.getPosX();
-        int screenWidth = 600;
+        int screenWidth = TwodimensionalGame.SCREEN_WIDTH;
 
         int sectionWidth = screenWidth; // Each section is as wide as the screen
 
@@ -25,7 +26,6 @@ public class World {
         } else {
             // Calculate the positive section index
             int sectionIndex = posX / sectionWidth;
-            System.out.println(posX);
             return sectionIndex;
         }
     }
@@ -34,5 +34,13 @@ public class World {
             sectionMap.put(section, new WorldSection());
         }
         return sectionMap.get(section).getBlocks();
+    }
+
+    public void removeBlock(Block block) {
+        for(WorldSection section : sectionMap.values()) {
+            if(section.getBlocks().contains(block)) {
+                section.removeBlock(block);
+            }
+        }
     }
 }

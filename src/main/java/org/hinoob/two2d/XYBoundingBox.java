@@ -19,4 +19,9 @@ public class XYBoundingBox {
     public String toString() {
         return "[minX=" + minX + ",maxX=" + maxX + ",minY=" + minY + ",maxY=" + maxY + "]";
     }
+
+
+    public XYBoundingBox clone() {
+        return new XYBoundingBox(minX, minY, maxX, maxY);
+    }
 }

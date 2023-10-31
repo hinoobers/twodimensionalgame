@@ -7,10 +7,12 @@ import org.hinoob.two2d.entity.type.ClientPlayer;
 import org.hinoob.two2d.manager.BlockManager;
 import org.hinoob.two2d.manager.EntityManager;
 import org.hinoob.two2d.manager.KeyManager;
+import org.hinoob.two2d.manager.MouseManager;
 import org.hinoob.two2d.swing.WindowFrame;
 import org.hinoob.two2d.swing.WindowPanel;
 import org.hinoob.two2d.world.World;
 
+import java.awt.*;
 import java.util.logging.Logger;
 
 public class TwodimensionalGame {
@@ -18,19 +20,26 @@ public class TwodimensionalGame {
     @Getter private static TwodimensionalGame instance = new TwodimensionalGame();
 
     private Logger logger = Logger.getLogger("Game");
-    private KeyManager keyManager = new KeyManager();
+
     @Getter private EntityManager entityManager = new EntityManager();
     @Getter private BlockManager blockManager = new BlockManager();
     @Getter private World world = new World();
 
     @Setter @Getter private ClientPlayer player;
 
+    public static final int SCREEN_WIDTH = 600;
+
     public void start(){
         WindowFrame window = new WindowFrame();
-        WindowPanel panel = new WindowPanel();
+        WindowPanel panel = new WindowPanel(window);
         window.add(panel);
 
-        window.addKeyListener(keyManager);
+        window.addKeyListener(new KeyManager());
+
+//        MouseManager mouseManager = new MouseManager();
+//        window.addMouseListener(mouseManager);
+//        window.addMouseMotionListener(mouseManager);
+
         window.setResizable(false);
         window.pack();
         window.setLocationRelativeTo(null);

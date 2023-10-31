@@ -1,6 +1,7 @@
 package org.hinoob.two2d.manager;
 
 import org.hinoob.two2d.entity.Entity;
+import org.hinoob.two2d.world.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +12,9 @@ public class EntityManager {
 
     private final List<Entity> entities = new ArrayList<>();
 
-    public Entity addEntity(Entity entity) {
+    public Entity addEntity(Entity entity, World world) {
         entity.entityId = entities.size() + 1;
+        entity.world = world;
         entities.add(entity);
         return entity;
     }

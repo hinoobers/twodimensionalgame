@@ -4,9 +4,9 @@ import org.hinoob.two2d.block.Block;
 
 import java.awt.*;
 
-public class Dirt extends Block {
+public class Grass extends Block {
 
-    public Color color = new Color(150, 75, 0);
+    public Color color = Color.GREEN;
     @Override
     public void onDraw(Graphics graphics) {
         graphics.setColor(color);

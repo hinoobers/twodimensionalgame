@@ -1,5 +1,7 @@
 package org.hinoob.two2d.entity;
 
+import java.awt.*;
+
 public class Player extends LivingEntity{
 
     private boolean jumped = false;
@@ -8,12 +10,14 @@ public class Player extends LivingEntity{
         this.width = 15;
         this.height = 15;
     }
+
+
     public void jump() {
-        if(jumped) {
+        if(jumped || !onGround) {
             // debounce
             return;
         }
-        this.motionY = 35;
+        this.motionY = 15;
         jumped = true;
     }
 

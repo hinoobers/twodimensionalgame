@@ -5,20 +5,30 @@ import org.hinoob.two2d.block.Block;
 import org.hinoob.two2d.block.type.Dirt;
 import org.hinoob.two2d.entity.Entity;
 import org.hinoob.two2d.entity.type.ClientPlayer;
+import org.hinoob.two2d.manager.MouseManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WindowPanel extends JPanel {
 
-    public WindowPanel() {
-        setPreferredSize(new Dimension(600, 800));
+    private final WindowFrame frame;
 
+    public WindowPanel(WindowFrame frame) {
+        this.frame = frame;
+        setSize(new Dimension(TwodimensionalGame.SCREEN_WIDTH, 800));
+        setPreferredSize(new Dimension(TwodimensionalGame.SCREEN_WIDTH, 800));
+
+        MouseManager mouseManager = new MouseManager();
+        addMouseListener(mouseManager);
+        addMouseMotionListener(mouseManager);
 
         ClientPlayer player = new ClientPlayer();
-        TwodimensionalGame.getInstance().setPlayer(TwodimensionalGame.getInstance().getEntityManager().addEntity(player));
+        TwodimensionalGame.getInstance().setPlayer(TwodimensionalGame.getInstance().getEntityManager().addEntity(player, TwodimensionalGame.getInstance().getWorld()));
     }
 
     @Override
@@ -27,7 +37,7 @@ public class WindowPanel extends JPanel {
 
         Color color = g.getColor();
         g.setColor(Color.BLUE);
-        g.fillRect(0,0,600,800);
+        g.fillRect(0,0,TwodimensionalGame.SCREEN_WIDTH,800);
         g.setColor(color);
 
         int preSection = TwodimensionalGame.getInstance().getWorld().calculateSectionFor(TwodimensionalGame.getInstance().getPlayer());
@@ -44,7 +54,7 @@ public class WindowPanel extends JPanel {
             if(x > 0) {
                 TwodimensionalGame.getInstance().getPlayer().moveX(5);
             } else {
-                TwodimensionalGame.getInstance().getPlayer().moveX(600 - 5);
+                TwodimensionalGame.getInstance().getPlayer().moveX(TwodimensionalGame.SCREEN_WIDTH - 5);
             }
         }
         for(Block block : TwodimensionalGame.getInstance().getWorld().getBlocksFor(postSection)) {
