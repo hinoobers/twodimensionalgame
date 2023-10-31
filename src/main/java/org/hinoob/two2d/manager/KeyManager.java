@@ -15,9 +15,9 @@ public class KeyManager implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_A) {
-            TwodimensionalGame.getInstance().getPlayer().motionX = -1;
+            TwodimensionalGame.getInstance().getPlayer().motionX = -10;
         } else if(e.getKeyCode() == KeyEvent.VK_D) {
-            TwodimensionalGame.getInstance().getPlayer().motionX = 1;
+            TwodimensionalGame.getInstance().getPlayer().motionX = 10;
         } else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
             TwodimensionalGame.getInstance().getPlayer().jump();
         }

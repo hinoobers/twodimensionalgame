@@ -9,6 +9,7 @@ import org.hinoob.two2d.manager.EntityManager;
 import org.hinoob.two2d.manager.KeyManager;
 import org.hinoob.two2d.swing.WindowFrame;
 import org.hinoob.two2d.swing.WindowPanel;
+import org.hinoob.two2d.world.World;
 
 import java.util.logging.Logger;
 
@@ -20,6 +21,7 @@ public class TwodimensionalGame {
     private KeyManager keyManager = new KeyManager();
     @Getter private EntityManager entityManager = new EntityManager();
     @Getter private BlockManager blockManager = new BlockManager();
+    @Getter private World world = new World();
 
     @Setter @Getter private ClientPlayer player;
 

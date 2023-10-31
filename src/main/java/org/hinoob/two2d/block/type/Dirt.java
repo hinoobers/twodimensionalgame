@@ -6,11 +6,12 @@ import java.awt.*;
 
 public class Dirt extends Block {
 
+    public Color color;
     @Override
     public void onDraw(Graphics graphics) {
-        graphics.setColor(new Color(150, 75, 0));
+        graphics.setColor(color);
         super.onDraw(graphics);
-        graphics.setColor(new Color(150, 75, 0).darker());
+        graphics.setColor(color.darker());
         graphics.drawRect(this.x, this.y, 20, 20);
     }
 }
