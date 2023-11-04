@@ -1,20 +1,22 @@
 package org.hinoob.two2d.swing;
 
+import org.hinoob.loom.ByteReader;
+import org.hinoob.loom.ByteWriter;
 import org.hinoob.two2d.TwodimensionalGame;
 import org.hinoob.two2d.block.Block;
-import org.hinoob.two2d.block.type.Dirt;
 import org.hinoob.two2d.entity.Entity;
 import org.hinoob.two2d.entity.type.ClientPlayer;
+import org.hinoob.two2d.manager.KeyManager;
 import org.hinoob.two2d.manager.MouseManager;
+import org.hinoob.two2d.packet.outgoing.RequestPlayers;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class WindowPanel extends JPanel {
+public class WindowPanel extends JPanel{
 
     private final WindowFrame frame;
 
@@ -26,9 +28,35 @@ public class WindowPanel extends JPanel {
         MouseManager mouseManager = new MouseManager();
         addMouseListener(mouseManager);
         addMouseMotionListener(mouseManager);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(true);
+        addKeyListener(new KeyManager());
 
         ClientPlayer player = new ClientPlayer();
-        TwodimensionalGame.getInstance().setPlayer(TwodimensionalGame.getInstance().getEntityManager().addEntity(player, TwodimensionalGame.getInstance().getWorld()));
+        TwodimensionalGame.getInstance().setPlayer(TwodimensionalGame.getInstance().getEntityManager().addEntityWithRandomEntityID(player, TwodimensionalGame.getInstance().getWorld()));
+    }
+
+    public WindowPanel(WindowFrame frame, int entityId, String displayName) {
+        this.frame = frame;
+        setSize(new Dimension(TwodimensionalGame.SCREEN_WIDTH, 800));
+        setPreferredSize(new Dimension(TwodimensionalGame.SCREEN_WIDTH, 800));
+
+
+        MouseManager mouseManager = new MouseManager();
+        addMouseListener(mouseManager);
+        addMouseMotionListener(mouseManager);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(true);
+        addKeyListener(new KeyManager());
+
+        ClientPlayer player = new ClientPlayer();
+        player.entityId = entityId;
+        System.out.println("My entity id is " + player.entityId);
+        player.displayName = displayName;
+        TwodimensionalGame.getInstance().setPlayer(player);
+        TwodimensionalGame.getInstance().getEntityManager().addEntity(player, TwodimensionalGame.getInstance().getWorld());
+
+        TwodimensionalGame.getInstance().getPacketWriter().sendPacket(new RequestPlayers());
     }
 
     @Override
@@ -39,6 +67,18 @@ public class WindowPanel extends JPanel {
         g.setColor(Color.BLUE);
         g.fillRect(0,0,TwodimensionalGame.SCREEN_WIDTH,800);
         g.setColor(color);
+
+        if(TwodimensionalGame.getInstance().getWorld() == null) {
+            Toolkit.getDefaultToolkit().sync();
+            try {
+                // 15ms per tick
+                Thread.sleep(15L);
+                repaint();
+            } catch(Exception ignored){
+
+            }
+            return;
+        }
 
         int preSection = TwodimensionalGame.getInstance().getWorld().calculateSectionFor(TwodimensionalGame.getInstance().getPlayer());
         for(Entity entity : TwodimensionalGame.getInstance().getEntityManager().getEntities()) {
@@ -87,5 +127,4 @@ public class WindowPanel extends JPanel {
 
         }
     }
-
 }

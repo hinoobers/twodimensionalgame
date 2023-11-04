@@ -1,7 +1,11 @@
 package org.hinoob.two2d.world;
 
+import org.hinoob.loom.ByteReader;
 import org.hinoob.two2d.TwodimensionalGame;
 import org.hinoob.two2d.block.Block;
+import org.hinoob.two2d.block.BlockType;
+import org.hinoob.two2d.block.type.Dirt;
+import org.hinoob.two2d.block.type.Grass;
 import org.hinoob.two2d.entity.Entity;
 import org.hinoob.two2d.entity.type.ClientPlayer;
 
@@ -36,11 +40,37 @@ public class World {
         return sectionMap.get(section).getBlocks();
     }
 
+    public void createSection(int section) {
+        WorldSection worldSection = new WorldSection();
+        sectionMap.put(section, worldSection);
+    }
+
     public void removeBlock(Block block) {
         for(WorldSection section : sectionMap.values()) {
             if(section.getBlocks().contains(block)) {
                 section.removeBlock(block);
             }
         }
+    }
+
+    public static World deserialize(ByteReader reader) {
+        World world = new World();
+
+        int sectionCount = reader.readInt();
+        for(int i = 0; i < sectionCount; i++) {
+            int section = reader.readInt();
+            WorldSection worldSection = new WorldSection(reader);
+            world.sectionMap.put(section, worldSection);
+        }
+
+        return world;
+    }
+
+    public boolean sectionExists(int section) {
+        return sectionMap.containsKey(section);
+    }
+
+    public WorldSection getSection(int section) {
+        return sectionMap.get(section);
     }
 }

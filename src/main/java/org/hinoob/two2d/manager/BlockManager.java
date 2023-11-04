@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BlockManager {
 
-    private final List<Block> blocks = new ArrayList<>();
+    private final CopyOnWriteArrayList<Block> blocks = new CopyOnWriteArrayList<>();
 
     public Block addBlock(Block entity) {
         blocks.add(entity);

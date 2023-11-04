@@ -33,6 +33,10 @@ public class Entity {
         this.posX = x;
     }
 
+    public void moveY(int y) {
+        this.posY = y;
+    }
+
     public void onTick() {
         if(hasGravity && !onGround) {
             this.motionY -= 1;
@@ -44,7 +48,7 @@ public class Entity {
         this.boundingBox = new XYBoundingBox(posX - (width / 2), posY, posX + (width / 2), posY + height);
     }
 
-    private void updatePosition() {
+    public void updatePosition() {
         int speed = Math.min(motionX, tickSpeed);
         int vSpeed = Math.min(motionY, tickSpeed);
 
