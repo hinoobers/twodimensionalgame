@@ -1,12 +1,13 @@
-package org.hinoob.twodimensionalgame.client.world;
+package org.hinoob.twodimensionalgame.server.world;
 
 import org.hinoob.twodimensionalgame.ModifiedBuf;
 import org.hinoob.twodimensionalgame.block.BlockType;
-import org.hinoob.twodimensionalgame.client.block.Block;
-import org.hinoob.twodimensionalgame.client.world.generator.GeneratorProvider;
-import org.hinoob.twodimensionalgame.client.TwodimensionalGame;
+import org.hinoob.twodimensionalgame.server.block.Block;
+import org.hinoob.twodimensionalgame.server.world.generator.GeneratorProvider;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class WorldSection {
@@ -19,7 +20,7 @@ public class WorldSection {
 
 
     public void generate(GeneratorProvider provider) {
-        for(int x = 0; x < TwodimensionalGame.SCREEN_WIDTH; x+=20) {
+        for(int x = 0; x < 600; x+=20) {
             for(int y = 0; y < 800; y+=20) {
                 Block block = provider.provide(x, y);
                 if(block == null) continue;
@@ -31,18 +32,26 @@ public class WorldSection {
 
     public void removeBlock(Block block) {
         blocks.remove(block);
-        TwodimensionalGame.getInstance().blockManager.removeBlock(block);
+//        TwodimensionalGame.getInstance().getBlockManager().removeBlock(block);
     }
 
     public void addBlock(Block block) {
         this.blocks.add(block);
-        TwodimensionalGame.getInstance().blockManager.addBlock(block);
+//        TwodimensionalGame.getInstance().getBlockManager().addBlock(block);
+    }
+
+    public void writeTo(ModifiedBuf buf) {
+        buf.writeInt(this.blocks.size());
+        for(Block block : this.blocks) {
+            buf.writeInt(block.type.ordinal());
+            buf.writeInt(block.posX);
+            buf.writeInt(block.posY);
+        }
     }
 
     public void loadDataFrom(ModifiedBuf buf) {
         this.blocks.clear();
         int i = buf.readInt();
-        System.out.println("Blocks=" + i);
         for(int z = 0; z < i; z++) {
             BlockType type = BlockType.values()[buf.readInt()];
             Block block = Block.fromType(type);

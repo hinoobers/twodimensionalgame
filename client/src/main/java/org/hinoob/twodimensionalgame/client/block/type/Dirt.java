@@ -1,7 +1,7 @@
 package org.hinoob.twodimensionalgame.client.block.type;
 
+import org.hinoob.twodimensionalgame.block.BlockType;
 import org.hinoob.twodimensionalgame.client.block.Block;
-import org.hinoob.twodimensionalgame.client.block.BlockType;
 
 import java.awt.*;
 

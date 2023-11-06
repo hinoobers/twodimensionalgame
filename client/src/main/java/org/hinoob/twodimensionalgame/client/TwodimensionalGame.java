@@ -1,11 +1,10 @@
 package org.hinoob.twodimensionalgame.client;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.hinoob.twodimensionalgame.client.entity.Entity;
 import org.hinoob.twodimensionalgame.client.entity.type.ClientPlayer;
 import org.hinoob.twodimensionalgame.client.manager.BlockManager;
 import org.hinoob.twodimensionalgame.client.manager.EntityManager;
+import org.hinoob.twodimensionalgame.client.manager.WorldManager;
 import org.hinoob.twodimensionalgame.client.network.PacketHandler;
 import org.hinoob.twodimensionalgame.client.swing.WindowFrame;
 import org.hinoob.twodimensionalgame.client.swing.WindowPanel;
@@ -18,23 +17,23 @@ import java.util.logging.Logger;
 
 public class TwodimensionalGame {
 
-    @Getter private static TwodimensionalGame instance = new TwodimensionalGame();
+    private static TwodimensionalGame instance = new TwodimensionalGame();
 
-    @Getter private static Logger logger = Logger.getLogger("Game");
+    private static Logger logger = Logger.getLogger("Game");
 
-    @Getter private EntityManager entityManager = new EntityManager();
-    @Getter private BlockManager blockManager = new BlockManager();
-    @Getter private World world;
+    public final EntityManager entityManager = new EntityManager();
+    public final BlockManager blockManager = new BlockManager();
+    public final WorldManager worldManager = new WorldManager();
 
-    @Setter @Getter private ClientPlayer player;
+    private ClientPlayer player;
 
     public static final int SCREEN_WIDTH = 600;
 
-    @Getter private NetworkHandler client;
-    @Getter private PacketHandler packetHandler = new PacketHandler();
+    private NetworkHandler client;
+    public final PacketHandler packetHandler = new PacketHandler();
 
-    @Getter private WindowFrame window = new WindowFrame();
-    @Getter private MainGuiFrame authGui = new MainGuiFrame();
+    public final WindowFrame window = new WindowFrame();
+    public final MainGuiFrame authGui = new MainGuiFrame();
 
     public void start(){
         this.client = new NetworkHandler();
@@ -70,9 +69,22 @@ public class TwodimensionalGame {
         this.player = (ClientPlayer) entity;
     }
 
-    public void setWorld(World world) {
-        this.world = world;
+    public ClientPlayer getPlayer() {
+        return player;
     }
+
+    public NetworkHandler getClient() {
+        return client;
+    }
+
+    public static TwodimensionalGame getInstance() {
+        return instance;
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
 
     public static void main(String[] args) {
         instance.start();

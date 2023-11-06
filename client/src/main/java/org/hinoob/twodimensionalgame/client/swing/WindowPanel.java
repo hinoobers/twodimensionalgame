@@ -27,7 +27,7 @@ public class WindowPanel extends JPanel{
         addKeyListener(new KeyManager());
 
         ClientPlayer player = new ClientPlayer();
-        TwodimensionalGame.getInstance().setPlayer(TwodimensionalGame.getInstance().getEntityManager().addEntityWithRandomEntityID(player, TwodimensionalGame.getInstance().getWorld()));
+        TwodimensionalGame.getInstance().setPlayer(TwodimensionalGame.getInstance().entityManager.addEntityWithRandomEntityID(player, TwodimensionalGame.getInstance().worldManager.getActiveWorld()));
     }
 
     public WindowPanel(WindowFrame frame, int entityId, String displayName) {
@@ -48,7 +48,7 @@ public class WindowPanel extends JPanel{
         System.out.println("My entity id is " + player.entityId);
         player.displayName = displayName;
         TwodimensionalGame.getInstance().setPlayer(player);
-        TwodimensionalGame.getInstance().getEntityManager().addEntity(player, TwodimensionalGame.getInstance().getWorld());
+        TwodimensionalGame.getInstance().entityManager.addEntity(player, TwodimensionalGame.getInstance().worldManager.getActiveWorld());
 
         //TwodimensionalGame.getInstance().getPacketWriter().sendPacket(new RequestPlayers());
     }
@@ -62,7 +62,7 @@ public class WindowPanel extends JPanel{
         g.fillRect(0,0,TwodimensionalGame.SCREEN_WIDTH,800);
         g.setColor(color);
 
-        if(TwodimensionalGame.getInstance().getWorld() == null) {
+        if(TwodimensionalGame.getInstance().worldManager.getActiveWorld() == null) {
             Toolkit.getDefaultToolkit().sync();
             try {
                 // 15ms per tick
@@ -74,11 +74,11 @@ public class WindowPanel extends JPanel{
             return;
         }
 
-        int preSection = TwodimensionalGame.getInstance().getWorld().calculateSectionFor(TwodimensionalGame.getInstance().getPlayer());
-        for(Entity entity : TwodimensionalGame.getInstance().getEntityManager().getEntities()) {
+        int preSection = TwodimensionalGame.getInstance().worldManager.getActiveWorld().calculateSectionFor(TwodimensionalGame.getInstance().getPlayer());
+        for(Entity entity : TwodimensionalGame.getInstance().entityManager.getEntities()) {
             entity.onTick();
         }
-        int postSection = TwodimensionalGame.getInstance().getWorld().calculateSectionFor(TwodimensionalGame.getInstance().getPlayer());
+        int postSection = TwodimensionalGame.getInstance().worldManager.getActiveWorld().calculateSectionFor(TwodimensionalGame.getInstance().getPlayer());
 
         if(preSection != postSection){
             // they switched
@@ -91,12 +91,12 @@ public class WindowPanel extends JPanel{
                 TwodimensionalGame.getInstance().getPlayer().moveX(TwodimensionalGame.SCREEN_WIDTH - 5);
             }
         }
-        for(Block block : TwodimensionalGame.getInstance().getWorld().getBlocksFor(postSection)) {
+        for(Block block : TwodimensionalGame.getInstance().worldManager.getActiveWorld().getBlocksFor(postSection)) {
             block.onDraw(g);
         }
 
-        for(Block block : TwodimensionalGame.getInstance().getBlockManager().getBlocks()) {
-            for(Entity entity : TwodimensionalGame.getInstance().getEntityManager().getEntities()) {
+        for(Block block : TwodimensionalGame.getInstance().blockManager.getBlocks()) {
+            for(Entity entity : TwodimensionalGame.getInstance().entityManager.getEntities()) {
                 if(block.boundingBox != null && entity.boundingBox != null && block.boundingBox.intersects(entity.boundingBox)) {
                     entity.onCollide(block);
                     block.onCollide(entity);
@@ -105,11 +105,11 @@ public class WindowPanel extends JPanel{
         }
 
         // Draw everything here
-        for(Entity entity : TwodimensionalGame.getInstance().getEntityManager().getEntities()) {
+        for(Entity entity : TwodimensionalGame.getInstance().entityManager.getEntities()) {
             entity.onDraw(g);
         }
 
-        for(Entity entity : TwodimensionalGame.getInstance().getEntityManager().getEntities()) {
+        for(Entity entity : TwodimensionalGame.getInstance().entityManager.getEntities()) {
             entity.endOfTick();
         }
         Toolkit.getDefaultToolkit().sync();

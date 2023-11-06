@@ -4,6 +4,7 @@ import org.hinoob.twodimensionalgame.packet.Packet;
 import org.hinoob.twodimensionalgame.packet.type.clienttoserver.AuthPacket;
 import org.hinoob.twodimensionalgame.packet.type.servertoclient.AuthResponse;
 import org.hinoob.twodimensionalgame.packet.type.servertoclient.JoinPacket;
+import org.hinoob.twodimensionalgame.packet.type.servertoclient.WorldPacket;
 import org.hinoob.twodimensionalgame.server.Server;
 import org.hinoob.twodimensionalgame.server.entity.Player;
 
@@ -16,9 +17,10 @@ public class PacketHandler {
     }
 
     private void handleAuth(Player player, AuthPacket packet) {
-        if (Server.getInstance().getDatabaseManager().doesUserExist(packet.getUsername(), packet.getPassword())) {
+        if (Server.getInstance().databaseManager.doesUserExist(packet.username, packet.password)) {
             player.sendPacket(new AuthResponse(AuthResponse.Response.OK));
             player.sendPacket(new JoinPacket(player.entityId, "Player #" + player.entityId));
+            player.sendPacket(new WorldPacket(Server.getInstance().worldManager.getWorlds().stream().toList().get(0)));
         } else {
             player.sendPacket(new AuthResponse(AuthResponse.Response.FAILED));
         }

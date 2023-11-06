@@ -1,7 +1,9 @@
 package org.hinoob.twodimensionalgame.client.block;
 
-import lombok.Getter;
+import org.hinoob.twodimensionalgame.block.BlockType;
 import org.hinoob.twodimensionalgame.client.XYBoundingBox;
+import org.hinoob.twodimensionalgame.client.block.type.Dirt;
+import org.hinoob.twodimensionalgame.client.block.type.Grass;
 import org.hinoob.twodimensionalgame.client.entity.Entity;
 
 import java.awt.*;
@@ -9,9 +11,8 @@ import java.awt.*;
 // default blocks are 20x20
 public class Block {
 
-    @Getter
-    protected int x, y;
-    @Getter protected int width = 20, height = 20;
+    public int x, y;
+    protected int width = 20, height = 20;
     public BlockType type;
     public XYBoundingBox boundingBox;
 
@@ -27,5 +28,32 @@ public class Block {
 
     public void onCollide(Entity entity){
 
+    }
+
+    public static Block fromType(BlockType type) {
+        switch (type) {
+            case DIRT:
+                return new Dirt();
+            case GRASS:
+                return new Grass();
+        }
+
+        return null;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

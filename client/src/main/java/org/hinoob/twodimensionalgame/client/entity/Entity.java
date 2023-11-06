@@ -1,6 +1,5 @@
 package org.hinoob.twodimensionalgame.client.entity;
 
-import lombok.Getter;
 import org.hinoob.twodimensionalgame.client.block.Block;
 import org.hinoob.twodimensionalgame.client.world.World;
 import org.hinoob.twodimensionalgame.client.XYBoundingBox;
@@ -12,7 +11,6 @@ public class Entity {
     public int entityId;
     public World world;
     public XYBoundingBox boundingBox;
-    @Getter
     protected int posX = 15, posY = 15;
     public int motionX, motionY;
     public int width = 3, height = 3;
@@ -60,6 +58,8 @@ public class Entity {
         int deltaY = Math.min(motionY, tickSpeed);
 
         this.onGround = false;
+        if(world == null) return; // no collisions
+
         for(Block block : world.getBlocksFor(section)) {
             XYBoundingBox bb = this.boundingBox.clone();
             bb.minY -= 1;
@@ -110,6 +110,10 @@ public class Entity {
         if(section == 0)
             return posX;
         return (section * 600) + posX;
+    }
+
+    public int getPosY() {
+        return posY;
     }
 
     public int getRawX() {

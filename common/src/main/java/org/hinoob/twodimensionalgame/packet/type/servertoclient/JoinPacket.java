@@ -1,14 +1,13 @@
 package org.hinoob.twodimensionalgame.packet.type.servertoclient;
 
-import lombok.Getter;
 import org.hinoob.twodimensionalgame.ModifiedBuf;
 import org.hinoob.twodimensionalgame.packet.Packet;
 
 // This is only for the player that is spawning
 public class JoinPacket extends Packet {
 
-    @Getter private int entityId;
-    @Getter private String displayName;
+    public int entityId;
+    public String displayName;
 
     public JoinPacket(int entityID, String displayName) {
         this.entityId = entityID;

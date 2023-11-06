@@ -1,9 +1,10 @@
 package org.hinoob.twodimensionalgame.server.manager;
 
+import org.hinoob.twodimensionalgame.EntityType;
 import org.hinoob.twodimensionalgame.server.entity.Entity;
+import org.hinoob.twodimensionalgame.server.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class EntityManager {
 
@@ -18,5 +19,9 @@ public class EntityManager {
 
     public void removeEntity(int entityId) {
         entityMap.remove(entityId);
+    }
+
+    public Collection<Player> getPlayers() {
+        return Collections.unmodifiableCollection(entityMap.values().stream().filter(p -> p.type == EntityType.PLAYER).map(d -> (Player)d).toList());
     }
 }

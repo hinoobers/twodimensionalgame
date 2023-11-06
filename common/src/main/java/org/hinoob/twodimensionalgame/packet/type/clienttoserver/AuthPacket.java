@@ -1,6 +1,5 @@
 package org.hinoob.twodimensionalgame.packet.type.clienttoserver;
 
-import lombok.Getter;
 import org.hinoob.twodimensionalgame.ModifiedBuf;
 import org.hinoob.twodimensionalgame.packet.Packet;
 
@@ -8,8 +7,7 @@ import java.lang.annotation.Target;
 
 public class AuthPacket extends Packet {
 
-    @Getter
-    private String username, password;
+    public String username, password;
 
     public AuthPacket(String username, String password) {
         this.username = username;

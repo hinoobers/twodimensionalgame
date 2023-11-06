@@ -44,4 +44,31 @@ public class ModifiedBuf {
     public int readInt() {
         return buf.readInt();
     }
+
+    public void writeVarInt(int value) {
+        while (true) {
+            if ((value & 0xFFFFFF80) == 0) {
+                buf.writeByte(value);
+                return;
+            }
+            buf.writeByte(value & 0x7F | 0x80);
+            value >>>= 7;
+        }
+    }
+
+    public int readVarInt() {
+        int i = 0;
+        int j = 0;
+        while (true) {
+            int k = buf.readByte();
+            i |= (k & 0x7F) << j++ * 7;
+            if (j > 5) {
+                throw new RuntimeException("VarInt too big");
+            }
+            if ((k & 0x80) != 128) {
+                break;
+            }
+        }
+        return i;
+    }
 }

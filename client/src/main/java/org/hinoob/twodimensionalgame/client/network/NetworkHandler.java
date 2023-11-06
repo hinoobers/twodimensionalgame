@@ -7,8 +7,16 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.flow.FlowControlHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.hinoob.twodimensionalgame.ModifiedBuf;
 import org.hinoob.twodimensionalgame.client.TwodimensionalGame;
+import org.hinoob.twodimensionalgame.client.swing.WindowFrame;
+import org.hinoob.twodimensionalgame.network.FrameDecoder;
+import org.hinoob.twodimensionalgame.network.FrameEncoder;
 import org.hinoob.twodimensionalgame.packet.Packet;
 import org.hinoob.twodimensionalgame.packet.PacketTypes;
 
@@ -25,14 +33,20 @@ public class NetworkHandler {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            TwodimensionalGame.getInstance().getWindow().add(TwodimensionalGame.getInstance().getAuthGui());
-                            TwodimensionalGame.getInstance().getWindow().setResizable(false);
-                            TwodimensionalGame.getInstance().getWindow().pack();
-                            TwodimensionalGame.getInstance().getWindow().setLocationRelativeTo(null);
-                            TwodimensionalGame.getInstance().getWindow().setVisible(true);
+                            WindowFrame window = TwodimensionalGame.getInstance().window;
+                            window.add(TwodimensionalGame.getInstance().authGui);
+                            window.setResizable(false);
+                            window.pack();
+                            window.setLocationRelativeTo(null);
+                            window.setVisible(true);
+
 
                             NetworkHandler.this.ourChannel = ch;
-                            ch.pipeline().addLast(new EchoClientHandler());
+                            ChannelPipeline pipeline = ch.pipeline();
+                            ch.pipeline().addLast("frame-decoder", new FrameDecoder());
+                            ch.pipeline().addLast("length-encoder", new FrameEncoder());
+                            ch.pipeline().addLast(new FlowControlHandler());
+                            pipeline.addLast("packet-handler", new EchoClientHandler());
                         }
                     });
             ChannelFuture future = bootstrap.connect("localhost", 6969).sync();
@@ -51,7 +65,7 @@ public class NetworkHandler {
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
             ModifiedBuf buf = new ModifiedBuf((ByteBuf) msg);
             System.out.println("received=" + buf.getLength());
-            int packetID = buf.readInt();
+            int packetID = buf.readVarInt();
             Packet packet = PacketTypes.serverToClient(packetID);
             if(packet == null) {
                 TwodimensionalGame.getLogger().info("Invalid packet received, id=" + packetID);
@@ -59,7 +73,7 @@ public class NetworkHandler {
             }
             TwodimensionalGame.getLogger().info("Packet with id " + packetID + " received");
             packet.read(buf);
-            TwodimensionalGame.getInstance().getPacketHandler().handlePacket(packet);
+            TwodimensionalGame.getInstance().packetHandler.handlePacket(packet);
         }
 
         @Override
@@ -67,7 +81,7 @@ public class NetworkHandler {
             if(msg instanceof Packet) {
                 System.out.println("Writing");
                 ModifiedBuf empty = new ModifiedBuf(Unpooled.buffer());
-                empty.writeInt(((Packet)msg).getID());
+                empty.writeVarInt(((Packet)msg).getID());
                 ((Packet)msg).write(empty);
                 System.out.println("Sent, length=" + empty.getLength());
                 super.write(ctx, empty.getEditedBuf(), promise);
