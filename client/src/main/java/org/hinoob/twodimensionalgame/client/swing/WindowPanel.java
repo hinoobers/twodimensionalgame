@@ -63,6 +63,12 @@ public class WindowPanel extends JPanel{
         g.fillRect(0,0,TwodimensionalGame.SCREEN_WIDTH,800);
         g.setColor(color);
 
+        // Marguse soov
+        g.setFont(new Font("Arial", Font.PLAIN, 50));
+        g.setColor(Color.BLACK);
+        g.drawString("VOCO", 300 - 80, 59);
+        g.setColor(color);
+
         if(TwodimensionalGame.getInstance().worldManager.getActiveWorld() == null) {
             Toolkit.getDefaultToolkit().sync();
             try {
