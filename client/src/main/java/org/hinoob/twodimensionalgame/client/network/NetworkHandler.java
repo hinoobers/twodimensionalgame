@@ -15,17 +15,21 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.hinoob.twodimensionalgame.ModifiedBuf;
 import org.hinoob.twodimensionalgame.client.TwodimensionalGame;
 import org.hinoob.twodimensionalgame.client.swing.WindowFrame;
+import org.hinoob.twodimensionalgame.client.swing.maingui.MainGuiFrame;
 import org.hinoob.twodimensionalgame.network.FrameDecoder;
 import org.hinoob.twodimensionalgame.network.FrameEncoder;
 import org.hinoob.twodimensionalgame.packet.Packet;
 import org.hinoob.twodimensionalgame.packet.PacketTypes;
 
+import javax.swing.*;
+
 public class NetworkHandler {
 
     private Channel ourChannel;
 
-    public void connect() throws Exception{
+    public void connect() throws Exception {
         NioEventLoopGroup group = new NioEventLoopGroup();
+
         try {
             Bootstrap bootstrap = new Bootstrap()
                     .group(group)
@@ -33,14 +37,6 @@ public class NetworkHandler {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            WindowFrame window = TwodimensionalGame.getInstance().window;
-                            window.add(TwodimensionalGame.getInstance().authGui);
-                            window.setResizable(false);
-                            window.pack();
-                            window.setLocationRelativeTo(null);
-                            window.setVisible(true);
-
-
                             NetworkHandler.this.ourChannel = ch;
                             ChannelPipeline pipeline = ch.pipeline();
                             ch.pipeline().addLast("frame-decoder", new FrameDecoder());
@@ -49,6 +45,7 @@ public class NetworkHandler {
                             pipeline.addLast("packet-handler", new EchoClientHandler());
                         }
                     });
+
             ChannelFuture future = bootstrap.connect("localhost", 6969).sync();
             future.channel().closeFuture().sync();
         } finally {
@@ -64,14 +61,12 @@ public class NetworkHandler {
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
             ModifiedBuf buf = new ModifiedBuf((ByteBuf) msg);
-            System.out.println("received=" + buf.getLength());
             int packetID = buf.readVarInt();
             Packet packet = PacketTypes.serverToClient(packetID);
             if(packet == null) {
                 TwodimensionalGame.getLogger().info("Invalid packet received, id=" + packetID);
                 return;
             }
-            TwodimensionalGame.getLogger().info("Packet with id " + packetID + " received");
             packet.read(buf);
             TwodimensionalGame.getInstance().packetHandler.handlePacket(packet);
         }
@@ -79,11 +74,9 @@ public class NetworkHandler {
         @Override
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
             if(msg instanceof Packet) {
-                System.out.println("Writing");
                 ModifiedBuf empty = new ModifiedBuf(Unpooled.buffer());
                 empty.writeVarInt(((Packet)msg).getID());
                 ((Packet)msg).write(empty);
-                System.out.println("Sent, length=" + empty.getLength());
                 super.write(ctx, empty.getEditedBuf(), promise);
             }
         }

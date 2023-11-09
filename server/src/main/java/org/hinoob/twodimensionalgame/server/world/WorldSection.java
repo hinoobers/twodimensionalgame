@@ -5,10 +5,7 @@ import org.hinoob.twodimensionalgame.block.BlockType;
 import org.hinoob.twodimensionalgame.server.block.Block;
 import org.hinoob.twodimensionalgame.server.world.generator.GeneratorProvider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class WorldSection {
 
@@ -33,6 +30,19 @@ public class WorldSection {
     public void removeBlock(Block block) {
         blocks.remove(block);
 //        TwodimensionalGame.getInstance().getBlockManager().removeBlock(block);
+    }
+
+    public boolean removeBlockByCoordinates(int x, int y) {
+        Iterator<Block> iterator = this.blocks.iterator();
+        while(iterator.hasNext()) {
+            Block next = iterator.next();
+            if(next.posX == x && next.posY == y) {
+                iterator.remove();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void addBlock(Block block) {

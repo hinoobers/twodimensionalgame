@@ -21,4 +21,8 @@ public class WorldManager {
     public Collection<World> getWorlds() {
         return Collections.unmodifiableCollection(this.worlds);
     }
+
+    public void doWorldGeneration() {
+        worlds.get(0).doWorldGeneration();
+    }
 }

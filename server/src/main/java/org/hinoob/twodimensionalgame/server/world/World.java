@@ -1,10 +1,13 @@
 package org.hinoob.twodimensionalgame.server.world;
 
 import org.hinoob.twodimensionalgame.ModifiedBuf;
+import org.hinoob.twodimensionalgame.server.Server;
 import org.hinoob.twodimensionalgame.server.block.Block;
+import org.hinoob.twodimensionalgame.server.entity.Player;
 import org.hinoob.twodimensionalgame.server.world.generator.DefaultGenerator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,23 +23,6 @@ public class World {
         getSection(1).generate(new DefaultGenerator());
         getSection(-1).generate(new DefaultGenerator());
     }
-
-//    public int calculateSectionFor(Entity player) {
-//        int posX = player.posX;
-//        int screenWidth = TwodimensionalGame.SCREEN_WIDTH;
-//
-//        int sectionWidth = screenWidth; // Each section is as wide as the screen
-//
-//        if (posX < 0) {
-//            // Calculate the negative section index
-//            int sectionIndex = (posX - sectionWidth) / sectionWidth;
-//            return sectionIndex;
-//        } else {
-//            // Calculate the positive section index
-//            int sectionIndex = posX / sectionWidth;
-//            return sectionIndex;
-//        }
-//    }
     public Collection<Block> getBlocksFor(int section) {
         if(!sectionMap.containsKey(section)) {
             sectionMap.put(section, new WorldSection());
@@ -86,5 +72,28 @@ public class World {
 
     public WorldSection getSection(int section) {
         return sectionMap.get(section);
+    }
+
+    public void doWorldGeneration() {
+        // Load two sections at once, minimum loaded and maximum loaded
+        int min = Collections.min(this.sectionMap.keySet());
+        int max = Collections.max(this.sectionMap.keySet());
+
+        // Do we even need to load?
+        boolean need = false;
+        for(Player player : Server.getInstance().entityManager.getPlayers()) {
+            if(Math.abs(player.section - min) < 2 || Math.abs(player.section - max) < 2) {
+                need = true;
+            }
+        }
+        if(!need) return;
+        WorldSection minSection = new WorldSection();
+        minSection.generate(new DefaultGenerator());
+        WorldSection maxSection = new WorldSection();
+        maxSection.generate(new DefaultGenerator());
+
+        this.sectionMap.put(min - 1, minSection);
+        this.sectionMap.put(max + 1, maxSection);
+        System.out.println("Generated " + (min - 1) + " and " + (max + 1));
     }
 }

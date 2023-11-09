@@ -22,6 +22,6 @@ public class EntityManager {
     }
 
     public Collection<Player> getPlayers() {
-        return Collections.unmodifiableCollection(entityMap.values().stream().filter(p -> p.type == EntityType.PLAYER).map(d -> (Player)d).toList());
+        return entityMap.values().stream().filter(p -> p.type == EntityType.PLAYER && ((Player)p).authenticated).map(d -> (Player) d).toList();
     }
 }

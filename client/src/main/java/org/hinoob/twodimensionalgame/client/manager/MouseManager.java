@@ -21,7 +21,7 @@ public class MouseManager extends MouseAdapter {
             int height = block.getHeight();
 
             if(isMouseInsideBlock(point.x, point.y, block.getX(), block.getY(), width, height)) {
-                player.world.removeBlock(block);
+                player.world.destroyBlock(block);
                 break;
             }
         }

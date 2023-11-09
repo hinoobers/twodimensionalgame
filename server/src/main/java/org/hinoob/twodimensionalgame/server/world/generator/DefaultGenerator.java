@@ -11,7 +11,8 @@ public class DefaultGenerator implements GeneratorProvider{
         // 150-200 grass layer
         if(y > 200) return null;
 
-        if(y >= 150 && y <= 200) {
+        if(y >= 150) {
+            System.out.println("DID GRASS");
             return new Grass();
         } else {
             return new Dirt();

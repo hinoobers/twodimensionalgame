@@ -6,6 +6,6 @@ import org.hinoob.twodimensionalgame.server.block.Block;
 public class Grass extends Block {
 
     public Grass() {
-        this.type = BlockType.DIRT;
+        this.type = BlockType.GRASS;
     }
 }

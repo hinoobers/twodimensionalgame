@@ -4,6 +4,7 @@ import org.hinoob.twodimensionalgame.ModifiedBuf;
 import org.hinoob.twodimensionalgame.client.TwodimensionalGame;
 import org.hinoob.twodimensionalgame.client.block.Block;
 import org.hinoob.twodimensionalgame.client.entity.Entity;
+import org.hinoob.twodimensionalgame.packet.type.clienttoserver.DestroyBlock;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,12 +42,14 @@ public class World {
         sectionMap.put(section, worldSection);
     }
 
-    public void removeBlock(Block block) {
-        for(WorldSection section : sectionMap.values()) {
-            if(section.getBlocks().contains(block)) {
-                section.removeBlock(block);
-            }
-        }
+    public void destroyBlock(Block block) {
+//        for(WorldSection section : sectionMap.values()) {
+//            if(section.getBlocks().contains(block)) {
+//                section.removeBlock(block);
+//            }
+//        }
+
+        TwodimensionalGame.getInstance().getClient().sendPacket(new DestroyBlock(block.x, block.y));
     }
 
     public void loadDataFrom(ModifiedBuf buf) {
@@ -61,6 +64,10 @@ public class World {
 
             sectionMap.put(sectionID, section);
         }
+    }
+
+    public void updateSection(int sectionId, WorldSection section) {
+        sectionMap.put(sectionId, section);
     }
 
     public boolean sectionExists(int section) {

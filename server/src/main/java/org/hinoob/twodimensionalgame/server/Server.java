@@ -19,6 +19,13 @@ import org.hinoob.twodimensionalgame.packet.PacketTypes;
 import org.hinoob.twodimensionalgame.server.manager.PacketHandler;
 import org.hinoob.twodimensionalgame.server.manager.WorldManager;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class Server {
@@ -31,14 +38,50 @@ public class Server {
     public final PacketHandler packetHandler = new PacketHandler();
     public final DatabaseManager databaseManager = new DatabaseManager();
     public final WorldManager worldManager = new WorldManager();
+    private final List<Channel> serverChannels = new ArrayList<>();
 
 
     public static void main(String[] args) {
         instance = new Server();
         instance.start();
+
+    }
+
+    private void handleConsole() {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(System.in));
+        try {
+            String line = reader.readLine();
+            if(line.equals("debug_players")) {
+                for(Player player : entityManager.getPlayers()) {
+                    System.out.println(player.entityId + " - section=" + player.section);
+                }
+            }
+            logger.info(line);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void runTick() {
+        entityManager.getPlayers().forEach(Player::tick);
+        worldManager.doWorldGeneration();
+    }
+
+    private void startLoop() {
+        while(true) {
+            runTick();
+            //handleConsole();
+            try {
+                Thread.sleep(15L);
+            } catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     public void start() {
+        logger.info("Starting server");
         databaseManager.connect();
 
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -60,18 +103,10 @@ public class Server {
                             ch.pipeline().addLast(new ServerNettyHandler(player));
                         }
                     });
-            ChannelFuture future = bootstrap.bind(6969).sync();
-            future.channel().closeFuture().sync();
-            while(true) {
-                entityManager.getPlayers().forEach(e -> e.tick());
-                try {
-                    Thread.sleep(15L);
-                } catch(InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            ChannelFutureListener listener = future -> serverChannels.add(future.channel());
+            bootstrap.bind(6969).addListener(listener);
+            logger.info("Server started");
+            startLoop();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();

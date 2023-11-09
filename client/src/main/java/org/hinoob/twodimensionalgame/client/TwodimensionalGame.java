@@ -11,8 +11,10 @@ import org.hinoob.twodimensionalgame.client.swing.WindowPanel;
 import org.hinoob.twodimensionalgame.client.swing.maingui.MainGuiFrame;
 import org.hinoob.twodimensionalgame.client.world.World;
 import org.hinoob.twodimensionalgame.client.network.NetworkHandler;
+import org.hinoob.twodimensionalgame.server.Server;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class TwodimensionalGame {
@@ -38,9 +40,20 @@ public class TwodimensionalGame {
     public void start(){
         this.client = new NetworkHandler();
         try {
+            SwingUtilities.invokeLater(() -> {
+                window.add(authGui);
+                authGui.requestFocus();
+
+                window.setResizable(false);
+                window.revalidate();
+                window.repaint();
+                window.pack();
+                window.setLocationRelativeTo(null);
+                window.setVisible(true);
+            });
             client.connect();
         } catch(Exception e){
-            e.printStackTrace();
+            logger.info("Failed");
         }
     }
 
@@ -52,12 +65,17 @@ public class TwodimensionalGame {
 
     public void handleLoginSuccess(int entityId, String displayName) {
         SwingUtilities.invokeLater(() -> {
+            window.remove(authGui); // Remove all components from the window's content pane
+            window.revalidate();
+            window.repaint();
 
+            // Create a new WindowPanel
             WindowPanel p = new WindowPanel(window, entityId, displayName);
             p.setVisible(true);
-            p.requestFocus();
 
+            // Add the new WindowPanel to the window's content pane
             window.add(p);
+
             window.revalidate();
             window.repaint();
             window.pack();

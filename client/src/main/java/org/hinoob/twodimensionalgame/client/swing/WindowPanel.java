@@ -6,6 +6,7 @@ import org.hinoob.twodimensionalgame.client.manager.KeyManager;
 import org.hinoob.twodimensionalgame.client.manager.MouseManager;
 import org.hinoob.twodimensionalgame.client.TwodimensionalGame;
 import org.hinoob.twodimensionalgame.client.entity.Entity;
+import org.hinoob.twodimensionalgame.packet.type.clienttoserver.AskForSection;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,6 +83,8 @@ public class WindowPanel extends JPanel{
 
         if(preSection != postSection){
             // they switched
+            TwodimensionalGame.getInstance().getClient().sendPacket(new AskForSection(postSection));
+
             System.out.println("Switched, newSection = " + postSection);
             int x = TwodimensionalGame.getInstance().getPlayer().getRawX();
             TwodimensionalGame.getInstance().getPlayer().section = postSection;
@@ -112,6 +115,7 @@ public class WindowPanel extends JPanel{
         for(Entity entity : TwodimensionalGame.getInstance().entityManager.getEntities()) {
             entity.endOfTick();
         }
+
         Toolkit.getDefaultToolkit().sync();
         try {
             // 15ms per tick

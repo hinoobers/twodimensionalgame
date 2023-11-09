@@ -8,9 +8,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class EntityManager {
 
-    private final List<Entity> entities = new ArrayList<>();
+    private final List<Entity> entities = new CopyOnWriteArrayList<>();
 
     public Entity addEntityWithRandomEntityID(Entity entity, World world) {
         entity.entityId = entities.size() + 1;
@@ -29,9 +34,14 @@ public class EntityManager {
         entities.remove(entity);
     }
 
+    public void removeEntity(int id) {
+        if(entities.isEmpty() || entities.stream().noneMatch(s -> s.entityId == id)) return;
+        entities.removeIf(s -> s.entityId ==id);
+    }
+
     public boolean doesEntityExist(int id) {
-        for(Entity entity : entities) {
-            if(entity.entityId == id) {
+        for (Entity entity : entities) {
+            if (entity.entityId == id) {
                 return true;
             }
         }
@@ -39,8 +49,8 @@ public class EntityManager {
     }
 
     public Entity getEntityById(int id) {
-        for(Entity entity : entities) {
-            if(entity.entityId == id) {
+        for (Entity entity : entities) {
+            if (entity.entityId == id) {
                 return entity;
             }
         }

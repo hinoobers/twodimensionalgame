@@ -12,6 +12,9 @@ public class ServerPlayer extends Player {
     @Override
     public void onDraw(Graphics graphics) {
         graphics.setFont(new Font("Arial", Font.PLAIN, 25));
+        if(displayName == null) {
+            displayName = "NULL";
+        }
         graphics.drawString(displayName, posX, posY - 15);
         graphics.setColor(Color.RED);
         graphics.fillRect(this.posX, this.posY, width, height);
